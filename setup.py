@@ -16,7 +16,7 @@ setup(name = 'py-classifier',
    license = 'BSD',
    keywords = 'bayesian filter api',
    url = 'https://github.com/crchemist/py-classifier',
-   packages=['py_classifier_api',],
+   packages=['classifier',],
    long_description=read('README'),
    classifiers=['Programming Language :: Python :: 3',]
 )
