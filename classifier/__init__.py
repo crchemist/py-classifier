@@ -11,13 +11,14 @@ import urllib.request
 
 class AntipClassifier(object):
 
-    def __init__(self, host='api.antip.org.ua'):
+    def __init__(self, host='api.antip.org.ua:80'):
         self.host = host
         print (host)
 
     def gen_new_key(self):
         print("generate new key")
-        url = 'http://'+self.host+':9900/key/new'
+        #url = 'http://'+self.host+':9900/key/new'
+        url = 'http://{0}/key/new'.format(self.host)
         try:
             response = urllib.request.urlopen(url, None)
         except urllib.request.URLError:
@@ -37,6 +38,6 @@ class AntipClassifier(object):
 
     
 
-t = AntipClassifier('127.0.0.1')
+t = AntipClassifier('127.0.0.1:9900')
 key = t.gen_new_key()
 print("end key=" ,key)
