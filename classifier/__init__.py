@@ -55,7 +55,7 @@ class AntipClassifier(object):
         self.key = key
     
     def train(self, data, basket="spam"):
-        if data is '':
+        if not data :
             raise ClassifierTrainError('Error occurs while train: data argument missing')
         url = 'http://{0}/classifier/train?key={1}&text={2}&category={3}'.format(self.host, self.key, urllib.parse.quote(data), urllib.parse.quote(basket))
         try:
@@ -67,7 +67,7 @@ class AntipClassifier(object):
             if data.get("result") != "OK": return ClassifierTrainError('Error occurs while train')
   
     def classify(self, data):
-        if data is '':
+        if not data :
             raise ClassifierClassifyError('Error occurs while clasify: data argument missing')
         url = 'http://{0}/classifier/classify?key={1}&text={2}'.format(self.host, self.key, urllib.parse.quote(data))
         try:
@@ -88,6 +88,5 @@ t.set_key(key)
 #t.train('this is not spam.. it good message', 'nonspam')
 #t.train('')
 #print (t.classify('it is spam'))
-#print (t.classify('sdfgdf'))
 #raise ClassifierKeyError("test error")
 
