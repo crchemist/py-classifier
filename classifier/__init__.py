@@ -2,13 +2,6 @@ import sys
 import json
 import urllib.request
 
-#from classifier import AntipClassifier
-#classifier = AntipClassifier('xxx.xxx.xxx.xxx') # тобто айпішку вказати
-#key = classifier.gen_new_key() # то перший раз коли ше ніякого ключа нема
-#classifier.set_key(key)
-#classifier.train(data="adsfasd", basket="spam")
-#basket = classifier.classify('dasfaf')
-
 class ClassifierKeyError(Exception):
     """This exception occurs when there is some issues with obtaining the key.
     """
@@ -52,7 +45,8 @@ class AntipClassifier(object):
         self.key = key
 
     def train(self, data, basket="spam"):
-        url = 'http://{0}/classifier/train?key={1}&text={2}&category={3}'.format(self.host, self.key, urllib.parse.quote(data), urllib.parse.quote(basket))
+        url = 'http://{0}/classifier/train?key={1}&text={2}&category={3}'.format(self.host, self.key,
+            urllib.parse.quote(data), urllib.parse.quote(basket))
         try:
             response = urllib.request.urlopen(url, None)
         except urllib.request.URLError:
@@ -72,17 +66,4 @@ class AntipClassifier(object):
             if not  data.get("result"):
                 raise ClassifierTrainError(str(data))
             return data.get("result")
-
-
-t = AntipClassifier('127.0.0.1:9900')
-#key = t.gen_new_key()
-key='1e3df71e-4f49-47f5-a163-3995a330fa47'
-t.set_key(key)
-#print("end key=" ,key)
-#t.train('it is spam')
-#t.train('this is not spam.. it good message', 'nonspam')
-#t.train('')
-#print(t.train('think', 'nonspam'))
-print (t.classify('i think its my task'))
-#raise ClassifierKeyError("test error")
 
