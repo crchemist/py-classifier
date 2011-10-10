@@ -16,11 +16,8 @@ def main():
     domains = args.domains
     key = args.key
     
-    train = AntipClassifier('127.0.0.1:9900')
-    #2a23e13e-614b-434f-9316-aa1e457f2028
+    train = AntipClassifier('api.antip.org.ua:80')
     train.set_key(key)
-
-    
 
     for d in open(domains):
         d = d.strip()
