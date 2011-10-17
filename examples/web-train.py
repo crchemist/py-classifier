@@ -6,7 +6,9 @@ import re
 from classifier import AntipClassifier
 
 
-HTML_TITLE_REGEXP = re.compile('<title>(?P<title>.+?)</title>')
+HTML_TITLE_REGEXP = re.compile('<title>(?P<title>.+?)</title>', re.I)
+HTML_CHARSET_REGEXP = re.compile('Content-Type.*[encoding|charset]+=([a-zA-Z0-9-_]+)', re.I)
+HTML_CHARSET_REGEXP_FROM_BODY = re.compile('charset=([a-zA-Z0-9-_]+)', re.I)
 
 def main():
     parser = argparse.ArgumentParser(description='Train antip classificator')
@@ -23,15 +25,29 @@ def main():
 
     for d in open(domains):
         d = d.strip()
+        
         url='http://{0}/'.format(d)
-        #print (d, url)
         try: 
             data = urllib.request.urlopen(url)
         except (urllib.request.URLError, UnicodeEncodeError) :
             print("can't open domain %s with url %s" %(d, url))
             continue
+        ### determine charset for domains - 1st: with http headers, 2nd:  from html body 
+        data_read = data.read()
+        headers=str(data.info())
+        charset_match = HTML_CHARSET_REGEXP.search(headers)
+        if charset_match:
+            charset = charset_match.group(1)
+        else:
+            charset_match = HTML_CHARSET_REGEXP_FROM_BODY.search(str(data_read))
+            if charset_match:
+                charset = charset_match.group(1)
+            else:
+                ### try to set utf-8 encode /// 
+                charset='utf-8'
+        
         try:
-            data = data.read().decode('utf-8')
+            data = data_read.decode(charset)
         except UnicodeDecodeError:
             print("can't open domain %s with url %s, problem with decode " %(d, url))
             continue
@@ -39,7 +55,7 @@ def main():
         if title_match :
             title = title_match.groupdict()['title']
             print ('%s with title %s' %(d, title))
-            train.train(title, category)
+#            train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
 if __name__ == '__main__':
