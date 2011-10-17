@@ -55,7 +55,7 @@ def main():
         if title_match :
             title = title_match.groupdict()['title']
             print ('%s with title %s' %(d, title))
-#            train.train(title, category)
+            train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
 if __name__ == '__main__':
