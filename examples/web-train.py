@@ -25,7 +25,7 @@ def main():
 
     for d in open(domains):
         d = d.strip()
-        
+        charset_match = None
         url='http://{0}/'.format(d)
         try: 
             data = urllib.request.urlopen(url)
@@ -34,8 +34,12 @@ def main():
             continue
         ### determine charset for domains - 1st: with http headers, 2nd:  from html body 
         data_read = data.read()
-        headers=str(data.info())
-        charset_match = HTML_CHARSET_REGEXP.search(headers)
+        try:
+            headers = str(data.info())
+        except:
+            fuck = 1 
+        else:
+            charset_match = HTML_CHARSET_REGEXP.search(headers)
         if charset_match:
             charset = charset_match.group(1)
         else:
@@ -45,16 +49,18 @@ def main():
             else:
                 ### try to set utf-8 encode /// 
                 charset='utf-8'
-        
+        if charset == 'win-1251':
+            charset = 'windows-1251'
+    
         try:
             data = data_read.decode(charset)
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, LookupError):
             print("can't open domain %s with url %s, problem with decode " %(d, url))
             continue
         title_match = HTML_TITLE_REGEXP.search(data)
         if title_match :
             title = title_match.groupdict()['title']
-            print ('%s with title %s' %(d, title))
+            print ('%s with title %s in: %s' %(d, title, category))
             train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)

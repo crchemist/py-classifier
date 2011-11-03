@@ -1,6 +1,7 @@
 import sys
 import json
 import urllib.request
+import urllib.parse
 
 class ClassifierKeyError(Exception):
     """This exception occurs when there is some issues with obtaining the key.
@@ -33,7 +34,7 @@ class AntipClassifier(object):
         self.host = host
 
     def gen_new_key(self):
-        url = 'http://{0}/key/new'.format(self.host)
+        url = 'http://{0}/key/'.format(self.host)
         try:
             response = urllib.request.urlopen(url, None)
         except urllib.request.URLError:
@@ -44,11 +45,12 @@ class AntipClassifier(object):
     def set_key(self, key):
         self.key = key
 
-    def train(self, data, basket="spam"):
-        url = 'http://{0}/classifier/train?key={1}&text={2}&category={3}'.format(self.host, self.key,
-            urllib.parse.quote(data), urllib.parse.quote(basket))
+    def train(self, data, category="porn"):
+        params = urllib.parse.urlencode({'key': self.key, 'data': data, 'category': category})
+        params = params.encode('utf-8')
+        url = 'http://{0}/train/'.format(self.host)
         try:
-            response = urllib.request.urlopen(url, None)
+            response = urllib.request.urlopen(url, params)
         except urllib.request.URLError:
             raise ClassifierTrainError('Error occurs while train: can\'t open url')
         else:
@@ -56,14 +58,16 @@ class AntipClassifier(object):
             if data.get("result") != "OK": return ClassifierTrainError(str(data))
 
     def classify(self, data):
-        url = 'http://{0}/classifier/classify?key={1}&text={2}'.format(self.host, self.key, urllib.parse.quote(data))
+        params = urllib.parse.urlencode({'key': self.key, 'data': data})
+        params = params.encode('utf-8')
+        url = 'http://{0}/classify/'.format(self.host)
         try:
-            response = urllib.request.urlopen(url, None)
+            response = urllib.request.urlopen(url, params)
         except urllib.request.URLError:
             raise ClassifierTrainError('Error occurs while classify: can\'t open url')
         else:
             data = json.loads(response.read().decode('utf-8'))
-            if not  data.get("result"):
-                raise ClassifierTrainError(str(data))
-            return data.get("result")
+            #if not  data.get("result"):
+            #    raise ClassifierTrainError(str(data))
+            return data
 
