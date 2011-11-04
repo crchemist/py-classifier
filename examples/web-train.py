@@ -4,7 +4,7 @@ import argparse
 import urllib.request
 import re
 from classifier import AntipClassifier
-
+import http
 
 HTML_TITLE_REGEXP = re.compile('<title>(?P<title>.+?)</title>', re.I)
 HTML_CHARSET_REGEXP = re.compile('Content-Type.*[encoding|charset]+=([a-zA-Z0-9-_]+)', re.I)
@@ -20,16 +20,16 @@ def main():
     key = args.key
     category = args.category
     
-    train = AntipClassifier('api.antip.org.ua:80')
-    train.set_key(key)
+#    train = AntipClassifier('api.antip.org.ua:80')
+#    train.set_key(key)
 
     for d in open(domains):
         d = d.strip()
         charset_match = None
         url='http://{0}/'.format(d)
         try: 
-            data = urllib.request.urlopen(url)
-        except (urllib.request.URLError, UnicodeEncodeError) :
+            data = urllib.request.urlopen(url)  
+        except (urllib.request.URLError, UnicodeEncodeError, http.client.BadStatusLine) :
             print("can't open domain %s with url %s" %(d, url))
             continue
         ### determine charset for domains - 1st: with http headers, 2nd:  from html body 
@@ -61,7 +61,7 @@ def main():
         if title_match :
             title = title_match.groupdict()['title']
             print ('%s with title %s in: %s' %(d, title, category))
-            train.train(title, category)
+#            train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
 if __name__ == '__main__':
