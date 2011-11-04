@@ -20,8 +20,8 @@ def main():
     key = args.key
     category = args.category
     
-#    train = AntipClassifier('api.antip.org.ua:80')
-#    train.set_key(key)
+    train = AntipClassifier('api.antip.org.ua:80')
+    train.set_key(key)
 
     for d in open(domains):
         d = d.strip()
@@ -61,7 +61,7 @@ def main():
         if title_match :
             title = title_match.groupdict()['title']
             print ('%s with title %s in: %s' %(d, title, category))
-#            train.train(title, category)
+            train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
 if __name__ == '__main__':
