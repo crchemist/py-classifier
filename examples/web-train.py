@@ -13,14 +13,14 @@ HTML_CHARSET_REGEXP_FROM_BODY = re.compile('charset=([a-zA-Z0-9-_]+)', re.I)
 def main():
     parser = argparse.ArgumentParser(description='Train antip classificator')
     parser.add_argument('-d', '--domains', dest='domains', required=True, help='path to file with domains list')
-    parser.add_argument('-k', '--key', dest='key', required=True, help='key for cassifier ')
+    parser.add_argument('-k', '--key', dest='key', default='crawler', help='key for cassifier ')
     parser.add_argument('-c', '--category', dest='category', required=True, help='category name for cassifier ')
     args = parser.parse_args()
     domains = args.domains
     key = args.key
     category = args.category
     
-    train = AntipClassifier('api.antip.org.ua:80')
+    train = AntipClassifier('api.antip.org.ua')
     train.set_key(key)
 
     for d in open(domains):
@@ -53,18 +53,17 @@ def main():
             charset = 'windows-1251'
     
         try:
-            data = data_read.decode(charset)
+            data = data_read.decode(charset).encode('UTF-8')
         except (UnicodeDecodeError, LookupError):
             print("can't open domain %s with url %s, problem with decode " %(d, url))
             continue
         title_match = HTML_TITLE_REGEXP.search(data)
-        if title_match :
+        if title_match:
             title = title_match.groupdict()['title']
             print ('%s with title %s in: %s' %(d, title, category))
             train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
+
 if __name__ == '__main__':
     main()
-  
-
