@@ -16,6 +16,7 @@ def main():
     parser.add_argument('-k', '--key', dest='key', default='crawler', help='key for cassifier ')
     parser.add_argument('-c', '--category', dest='category', required=True, help='category name for cassifier ')
     parser.add_argument('-s', '--api-server', dest='api_server', default='api.antip.org.ua')
+    parser.add_argument('-debug', '--debug', dest='debug', default=None, help='debug script; data not send to classifier')
     args = parser.parse_args()
     domains = args.domains
     key = args.key
@@ -23,6 +24,7 @@ def main():
     
     train = AntipClassifier(args.api_server)
     train.set_key(key)
+    debug = args.debug
 
     for d in open(domains):
         d = d.strip()
