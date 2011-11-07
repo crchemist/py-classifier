@@ -15,12 +15,13 @@ def main():
     parser.add_argument('-d', '--domains', dest='domains', required=True, help='path to file with domains list')
     parser.add_argument('-k', '--key', dest='key', default='crawler', help='key for cassifier ')
     parser.add_argument('-c', '--category', dest='category', required=True, help='category name for cassifier ')
+    parser.add_argument('-s', '--api-server', dest='api_server', default='api.antip.org.ua')
     args = parser.parse_args()
     domains = args.domains
     key = args.key
     category = args.category
     
-    train = AntipClassifier('api.antip.org.ua')
+    train = AntipClassifier(args.api_server)
     train.set_key(key)
 
     for d in open(domains):
