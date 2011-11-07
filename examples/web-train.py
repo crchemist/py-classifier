@@ -53,7 +53,7 @@ def main():
             charset = 'windows-1251'
     
         try:
-            data = data_read.decode(charset).encode('UTF-8')
+            data = data_read.decode(charset)
         except (UnicodeDecodeError, LookupError):
             print("can't open domain %s with url %s, problem with decode " %(d, url))
             continue
@@ -61,7 +61,7 @@ def main():
         if title_match:
             title = title_match.groupdict()['title']
             print ('%s with title %s in: %s' %(d, title, category))
-            train.train(title, category)
+            train.train(title.encode('UTF-8'), category)
         else:
             print ('can not find title for domain %s' %d)
 
