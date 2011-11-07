@@ -15,13 +15,16 @@ def main():
     parser.add_argument('-d', '--domains', dest='domains', required=True, help='path to file with domains list')
     parser.add_argument('-k', '--key', dest='key', required=True, help='key for cassifier ')
     parser.add_argument('-c', '--category', dest='category', required=True, help='category name for cassifier ')
+    parser.add_argument('-debug', '--debug', dest='debug', default=None, help='debug script; data not send to classifier')
     args = parser.parse_args()
     domains = args.domains
     key = args.key
     category = args.category
-    
-    train = AntipClassifier('api.antip.org.ua:80')
-    train.set_key(key)
+    debug = args.debug
+
+    if not debug:
+        train = AntipClassifier('api.antip.org.ua:80')
+        train.set_key(key)
 
     for d in open(domains):
         d = d.strip()
@@ -61,7 +64,8 @@ def main():
         if title_match :
             title = title_match.groupdict()['title']
             print ('%s with title %s in: %s' %(d, title, category))
-            train.train(title, category)
+            if not debug:
+                train.train(title, category)
         else:
             print ('can not find title for domain %s' %d)
 if __name__ == '__main__':
